@@ -94,12 +94,11 @@ public class TestBase {
 
     @Step("Добавляем в корзину карточку товара")
     public void pickRandCards() {
-        List<SelenideElement> clickRandomCards = elements(By.xpath("//button[contains(@class, \"add-to-basket\")]"));
+        List<SelenideElement> clickRandomCards = elements(By.xpath("//div/button[contains(@class, \"add-to-basket\") or (contains(text(), \"В корзину\"))]"));
         int i = (int) (Math.random() * clickRandomCards.size());
-        clickRandomCards.get(i).scrollTo();
-        clickRandomCards.get(i).click();
-
-
+        SelenideElement randCard = $(clickRandomCards.get(i));
+        randCard.closest(".item").scrollIntoView(true);
+        randCard.click();
     }
 
     @Step("Переходим в корзину")
@@ -131,10 +130,11 @@ public class TestBase {
 
     @Step("Выбираем способ оплаты (Налик)")
     public void selectPayType() {
-        $x("//div[@class = \"payment-wrapper\"][1]").scrollTo().click();
-        $("#change").setValue(HOW_MONEY_TO_COURIER);
+        SelenideElement CHANGE_INPUT = $("#change");
+        $(CHANGE_INPUT).closest(".pay-method").scrollIntoView(false).click();
+        $(CHANGE_INPUT).setValue(HOW_MONEY_TO_COURIER);
     }
-    
+
     @Step("Тыкаем на отправку заказа")
     public void sendOrder() {
         $x("//div[@class = \"item-cart-buttons\" ]/button[contains(@class, \"btn\")]").scrollTo().click();
@@ -144,7 +144,6 @@ public class TestBase {
     public void waitForComplete() {
         $x("//span[contains(text(),'Принят') or (contains(text(),'Поступил')) ]").shouldBe(visible);
     }
-
 
 }
 
